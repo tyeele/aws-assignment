@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Edit Employee Information</title>
+</head>
+<center>
+	<font color="black" size="4" style="font-family: avenir">
+
+		<h1 style="color: DodgerBlue">Edit Employee</h1>
+
+		<body bgcolor="lightgrey">
+
+			<form action="/editemp" autocomplete="on" method = "POST" enctype="multipart/form-data">
+
+		  		<!--Employee ID:<br> <input style="height:25px;font-size:14pt; color:grey;" type="number" name="emp_id" autofocus size="40"><br><br>-->
+                
+                Choose Employee to Edit:<br><SELECT name="emp_id" style="font-family:verdana">
+                {% for n in namelist %}
+                    <OPTION value={{n[0]}}>{{[n[2], n[1]]|join(' ')}}</OPTION>
+                {% endfor %}
+                </SELECT>
+                <br><br>
+
+		  		First Name:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="first_name" ><br><br>
+
+		  		Last Name:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="last_name"><br><br>
+
+		  		Contact:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="contact"><br><br>
+
+		  		Email:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="email"><br><br>
+
+				Position:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="position"><br><br>
+
+				Hired Date:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="hiredate"><br><br>
+
+				Salary:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="salary"><br><br>
+
+		  		Image: <input type=file name="emp_image_file" style="height:25px;font-size:14pt;color:grey;"> <br><br>
+
+		  		<button type="submit" style="background: grey; height: 45px; width: 200px; color: white; size: 5; font:oblique;">UPDATE DATABASE</button>
+
+			</form>
+<a href="/about">About Us</a>
+		</body>
+
+	</font>
+</center>
+</html>
