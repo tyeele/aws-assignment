@@ -29,6 +29,14 @@ def home():
 def about():
     return render_template('www.intellipaat.com')
 
+@app.route('/getemp', methods=['GET', 'POST'])
+def GetEmp():
+    cursor = db_conn.cursor()
+    cursor.execute("SELECT * FROM employee")
+    employee = cursor.fetchall()
+    
+    return render_template('GetEmp.html', employee=employee)
+
 @app.route("/diraddemp", methods=['GET', 'POST'])
 def DirectAddEmp():
     return render_template('AddEmp.html')
