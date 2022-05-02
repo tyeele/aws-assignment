@@ -87,9 +87,15 @@ def AddEmp():
 
 @app.route("/direditemp", methods=['GET','POST'])
 def DirectEditEmp():
-    return render_template("EditEmp.html")
+    #create a cursor
+    cursor = db_conn.cursor() 
+    #execute select statement to fetch data to be displayed in combo/dropdown
+    cursor.execute('SELECT emp_id, first_name, last_name FROM employee') 
+    #fetch all rows ans store as a set of tuples 
+    namelist = cursor.fetchall() 
+    return render_template("EditEmp.html", namelist=namelist)
 
-@app.route("/editdetails", methods=['GET','POST'])
+@app.route("/editemp", methods=['GET','POST'])
 def EditEmp():
     emp_id = request.form['emp_id']
     first_name = request.form['first_name']
@@ -107,7 +113,7 @@ def EditEmp():
     cursor.execute(update_sql, (changefield))
     db_conn.commit()
     cursor.close()
-    return render_template("EditOut.html")
+    return render_template("EditEmpOutput.html")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
