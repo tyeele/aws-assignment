@@ -25,22 +25,27 @@ table = 'employee'
 def home():
     return render_template('index.html')
 
-
 @app.route("/about", methods=['POST'])
 def about():
     return render_template('www.intellipaat.com')
 
+@app.route("/diraddemp", methods=['GET', 'POST'])
+def DirectAddEmp():
+    return render_template('AddEmp.html')
 
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
     emp_id = request.form['emp_id']
     first_name = request.form['first_name']
     last_name = request.form['last_name']
-    pri_skill = request.form['pri_skill']
-    location = request.form['location']
+    contact = request.form['contact']
+    email = request.form['email']
+    position = request.form['position']
+    hiredate = request.form['hiredate']
+    salary = request.form['salary']
     emp_image_file = request.files['emp_image_file']
 
-    insert_sql = "INSERT INTO employee VALUES (%s, %s, %s, %s, %s)"
+    insert_sql = "INSERT INTO employee VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     cursor = db_conn.cursor()
 
     if emp_image_file.filename == "":
@@ -48,10 +53,10 @@ def AddEmp():
 
     try:
 
-        cursor.execute(insert_sql, (emp_id, first_name, last_name, pri_skill, location))
+        cursor.execute(insert_sql, (emp_id, first_name, last_name, contact, email, position, hiredate, salary))
         db_conn.commit()
         emp_name = "" + first_name + " " + last_name
-        # Uplaod image file in S3 #
+        # Upload image file in S3 #
         emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file"
         s3 = boto3.resource('s3')
 
@@ -80,9 +85,29 @@ def AddEmp():
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
 
+@app.route("/direditemp", methods=['GET','POST'])
+def DirectEditEmp():
+    return render_template("EditEmp.html")
 
-@app.route("/editemp", methods=['POST'])
+@app.route("/editdetails", methods=['GET','POST'])
 def EditEmp():
+    emp_id = request.form['emp_id']
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    contact = request.form['contact']
+    email = request.form['email']
+    position = request.form['position']
+    hiredate = request.form['hiredate']
+    salary = request.form['salary']
+    
+    update_sql = "UPDATE employee SET first_name = %s, last_name = %s, contact = %s, email = %s, position = %s, hiredate = %s, salary = %s WHERE emp_id = %s"
+    cursor = db_conn.cursor()
+    
+    changefield = (first_name, last_name, contact, email, position, hiredate, salary, emp_id)
+    cursor.execute(update_sql, (changefield))
+    db_conn.commit()
+    cursor.close()
+    return render_template("EditOut.html")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
