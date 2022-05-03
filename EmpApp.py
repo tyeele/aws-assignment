@@ -4,6 +4,7 @@ import os
 import boto3
 from config import *
 from datetime import datetime
+import re
 
 app = Flask(__name__)
 
@@ -52,6 +53,14 @@ def DirectPayroll():
 def UpdatePayroll():
     emp_id = request.form['emp_id']
     salary = request.form['salary']
+
+    #check salary format
+    try:
+        salary = "${:,.2f}".format(salary)
+
+    except:
+        #return "Please enter a valid salary format!"
+        return render_template("Payroll.html", error="Please enter a valid salary format! e.g.: RM 500 or RM 1000.50")
     
     update_sql = "UPDATE employee SET salary = %s WHERE emp_id = %s"
     cursor = db_conn.cursor()
@@ -104,21 +113,29 @@ def AddAttendance():
     cursor.execute(insert_sql, (emp_id, time, date, status))
     db_conn.commit()
 
+    select_sql = "SELECT first_name, last_name FROM employee WHERE emp_id = %s"
+    cursor.execute(select_sql, (emp_id))
+    result = cursor.fetchone()
+    name = result[1] + " " + result[0]
+
     cursor.close()
-    return render_template("AddAttendanceOutput.html")
+    return render_template("AddAttendanceOutput.html", name=name, status=status, date=date, time=time)
 
-@app.route("/fetchdata", methods=['GET'])
-def GetEmpData(emp_id):
+@app.route("/fetchdata/<int:id>", methods=['GET'])
+def GetEmpData(id):
 
+    emp_id = id
     #emp_id = request.form['emp_id']
     mycursor = db_conn.cursor()
     getempdata = "select * from employee WHERE emp_id = %s"
     mycursor.execute(getempdata,(emp_id))
     result = mycursor.fetchall()
     (emp_id,first_name,last_name,contact_no,email,position,hiredate,salary) = result[0]   
-    image_url = showimage(bucket)
+    #image_url = showimage(bucket)
 
-    return render_template('GetEmpOutput.html', emp_id=emp_id,first_name=first_name,last_name=last_name,contact_no=contact_no,email=email,position=position,hiredate=hiredate,salary=salary,image_url=image_url)
+    name = last_name + " " + first_name
+
+    return render_template('GetEmpOutput.html', emp_id=emp_id,name=name, first_name=first_name,last_name=last_name,contact=contact_no,email=email,position=position,hiredate=hiredate,salary=salary)
 
 def showimage(bucket):
     s3_client = boto3.client('s3')
@@ -154,6 +171,24 @@ def AddEmp():
     hiredate = request.form['hiredate']
     salary = request.form['salary']
     emp_image_file = request.files['emp_image_file']
+
+    convertedId = int(emp_id) - 1
+    retrievedid = [[convertedId]]
+
+    #check salary and contact format
+    try:
+        pattern = "^[0-9.-]*$"
+        state = bool(re.match(pattern, contact))
+
+        if state is False:
+            contactError = "Please enter a valid contact format! e.g.: 012-3456789 or 0123456789"
+
+        salary = "${:,.2f}".format(salary)
+
+    except:
+        #return "Please enter a valid salary format!"
+        return render_template("AddEmp.html", error="Please enter a valid salary format! e.g.: RM 500 or RM 1000.50", contacterror=contactError, latestid=retrievedid)
+
 
     insert_sql = "INSERT INTO employee VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     cursor = db_conn.cursor()
@@ -195,15 +230,19 @@ def AddEmp():
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
 
-@app.route("/direditemp", methods=['GET','POST'])
-def DirectEditEmp():
-    #create a cursor
-    cursor = db_conn.cursor() 
-    #execute select statement to fetch data to be displayed in combo/dropdown
-    cursor.execute('SELECT emp_id, first_name, last_name FROM employee') 
-    #fetch all rows ans store as a set of tuples 
-    namelist = cursor.fetchall() 
-    return render_template("EditEmp.html", namelist=namelist)
+@app.route("/direditemp/<int:id>", methods=['GET','POST'])
+def DirectEditEmp(id):
+
+    mycursor = db_conn.cursor()
+    getempdata = "select * from employee WHERE emp_id = %s"
+    mycursor.execute(getempdata,(id))
+    result = mycursor.fetchall()
+    (emp_id,first_name,last_name,contact,email,position,hiredate,salary) = result[0]   
+    #image_url = showimage(bucket)
+
+    name = last_name + " " + first_name
+
+    return render_template("EditEmp.html", name=name, id=emp_id, first_name=first_name, last_name=last_name, contact=contact, email=email, position=position, hiredate=hiredate, salary=salary)
 
 @app.route("/editemp", methods=['GET','POST'])
 def EditEmp():
