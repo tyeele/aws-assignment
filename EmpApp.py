@@ -59,8 +59,13 @@ def UpdatePayroll():
     changefield = (salary, emp_id)
     cursor.execute(update_sql, (changefield))
     db_conn.commit()
+
+    select_sql = "SELECT first_name, last_name FROM employee WHERE emp_id = %s"
+    cursor.execute(select_sql, (emp_id))
+    result = cursor.fetchone()
+    name = result[1] + " " + result[0]
     cursor.close()
-    return render_template("PayrollOutput.html")
+    return render_template("PayrollOutput.html", name=name)
 
 @app.route("/dirattendance", methods=['GET', 'POST'])
 def DirectAttendance():
