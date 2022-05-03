@@ -444,7 +444,7 @@
 							<td>{{n[7]}}</td>
 							<td>
 								<a class="view" title="View" id="{{n[0]}}" href="{{ url_for('GetEmpData', id=n[0]) }}"><i class="mdi mdi-eye mdi-18px"></i></a>
-								<a class="edit" title="Edit" id="{{n[0]}}" href="/editemp"><i class="mdi mdi-pencil mdi-18px"></i></a>
+								<a class="edit" title="Edit" id="{{n[0]}}" href="{{ url_for('DirectEditEmp', id=n[0]) }}"><i class="mdi mdi-pencil mdi-18px"></i></a>
 								<a class="delete" title="Delete" id="{{n[0]}}" href="/delemp"><i class="mdi mdi-delete mdi-18px"></i></a>
 							</td>
 						</tr>
