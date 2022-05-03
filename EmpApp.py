@@ -67,7 +67,7 @@ def DirectAttendance():
     #create a cursor
     cursor = db_conn.cursor() 
     #execute select statement to fetch data to be displayed in combo/dropdown
-    cursor.execute('SELECT e.emp_id, e.first_name, e.last_name, a.att_time, a.att_date, a.att_status FROM employee e, attendance a WHERE e.emp_id = a.emp_id') 
+    cursor.execute('SELECT a.att_id, e.emp_id, e.first_name, e.last_name, a.att_time, a.att_date, a.att_status FROM employee e, attendance a WHERE e.emp_id = a.emp_id') 
     #fetch all rows ans store as a set of tuples 
     attlist = cursor.fetchall() 
     return render_template('Attendance.html', attlist=attlist)
