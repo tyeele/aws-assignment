@@ -77,7 +77,7 @@
 						<ul class="nav flex-column sub-menu">
 							<li class="nav-item"> <a class="nav-link" href="/getemp">Get Employee</a></li>
 							<li class="nav-item"> <a class="nav-link" href="/diraddemp">Add Employee</a></li>
-							<li class="nav-item"> <a class="nav-link" href="/direditemp">Edit Employee</a></li>
+							<li class="nav-item"> <a class="nav-link" href="/dirpayroll">Payroll</a></li>
 						</ul>
 					</div>
 				</li>
@@ -90,7 +90,8 @@
 					</a>
 					<div class="collapse" id="attendance">
 						<ul class="nav flex-column sub-menu">
-							<li class="nav-item"> <a class="nav-link" href="/dirattendance">Get Attendance</a></li>
+							<li class="nav-item"> <a class="nav-link" href="/dirattendance">Attendance List</a></li>
+                			<li class="nav-item"> <a class="nav-link" href="/diraddattendance">Add Attendance</a></li>
 						</ul>
 					</div>
 				</li>
@@ -103,7 +104,7 @@
 					<div class="col-12 grid-margin stretch-card">
 						<div class="card">
 							<div class="card-body">
-								<h4 class="card-title">Add New Employee</h4>
+								<h4 class="card-title">Employee Management</h4>
 								<p class="card-description">
 									Add New Employee
 								</p>
@@ -111,32 +112,36 @@
 									enctype="multipart/form-data">
 									<div class="form-group">
 										<label for="emp_id">Employee ID</label>
-										<input type="number" class="form-control" id="emp_id" placeholder="Employee ID">
+										<input type="number" class="form-control" name="emp_id" id="emp_id" value="{{ latestid[0][0]+1 }}" readonly>
 									</div>
 									<div class="form-group">
 										<label for="first_name">First Name</label>
-										<input type="text" class="form-control" id="first_name"
+										<input type="text" class="form-control" name="first_name" id="first_name"
 											placeholder="First Name">
 									</div>
 									<div class="form-group">
 										<label for="last_name">Last Name</label>
-										<input type="text" class="form-control" id="last_name" placeholder="Last Name">
+										<input type="text" class="form-control" name="last_name" id="last_name" placeholder="Last Name">
 									</div>
 									<div class="form-group">
 										<label for="contact">Contact</label>
-										<input type="text" class="form-control" id="contact" placeholder="Contact">
+										<input type="text" class="form-control" name="contact" id="contact" placeholder="Contact">
 									</div>
 									<div class="form-group">
 										<label for="email">Email address</label>
-										<input type="email" class="form-control" id="email" placeholder="Email address">
+										<input type="email" class="form-control" name="email" id="email" placeholder="Email address">
 									</div>
 									<div class="form-group">
 										<label for="position">Position</label>
-										<input type="text" class="form-control" id="position" placeholder="Position">
+										<input type="text" class="form-control" name="position" id="position" placeholder="Position">
+									</div>
+									<div class="form-group">
+										<label for="hiredate">Hire Date</label>
+										<input type="date" class="form-control" name="hiredate" id="hiredate" placeholder="Date">
 									</div>
 									<div class="form-group">
 										<label for="salary">Salary</label>
-										<input type="text" class="form-control" id="salary" placeholder="Salary">
+										<input type="text" class="form-control" name="salary" id="salary" placeholder="Salary">
 									</div>
 									<div class="form-group">
 										<label>Image</label>
