@@ -3,6 +3,7 @@ from pymysql import connections
 import os
 import boto3
 from config import *
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -37,9 +38,105 @@ def GetEmp():
     
     return render_template('GetEmp.html', employee=employee)
 
+@app.route("/dirpayroll", methods=['GET', 'POST'])
+def DirectPayroll():
+    #create a cursor
+    cursor = db_conn.cursor() 
+    #execute select statement to fetch data to be displayed in combo/dropdown
+    cursor.execute('SELECT emp_id, first_name, last_name, salary FROM employee') 
+    #fetch all rows ans store as a set of tuples 
+    namelist = cursor.fetchall() 
+    return render_template('Payroll.html', namelist=namelist)
+
+@app.route("/payroll", methods=['GET', 'POST'])
+def UpdatePayroll():
+    emp_id = request.form['emp_id']
+    salary = request.form['salary']
+    
+    update_sql = "UPDATE employee SET salary = %s WHERE emp_id = %s"
+    cursor = db_conn.cursor()
+    
+    changefield = (salary, emp_id)
+    cursor.execute(update_sql, (changefield))
+    db_conn.commit()
+    cursor.close()
+    return render_template("PayrollOutput.html")
+
+@app.route("/dirattendance", methods=['GET', 'POST'])
+def DirectAttendance():
+    #create a cursor
+    cursor = db_conn.cursor() 
+    #execute select statement to fetch data to be displayed in combo/dropdown
+    cursor.execute('SELECT e.emp_id, e.first_name, e.last_name, a.att_time, a.att_date, a.att_status FROM employee e, attendance a WHERE e.emp_id = a.emp_id') 
+    #fetch all rows ans store as a set of tuples 
+    attlist = cursor.fetchall() 
+    return render_template('Attendance.html', attlist=attlist)
+
+@app.route("/diraddattendance", methods=['GET', 'POST'])
+def DirectAddAttendance():
+    #create a cursor
+    cursor = db_conn.cursor() 
+    #execute select statement to fetch data to be displayed in combo/dropdown
+    cursor.execute('SELECT emp_id, first_name, last_name FROM employee') 
+    #fetch all rows ans store as a set of tuples 
+    namelist = cursor.fetchall() 
+    statuses = [{'status': 'Check In'}, {'status': 'Check Out'}]
+    now = datetime.now() # current date and time
+    date = now.strftime("%Y-%m-%d")
+    time = now.strftime("%H:%M:%S")
+    return render_template('AddAttendance.html', namelist=namelist, statuses=statuses, date=date, time=time)
+
+@app.route("/addattendance", methods=['GET', 'POST'])
+def AddAttendance():
+    emp_id = request.form['emp_id']
+    status = request.form['att_status']
+    date = request.form['att_date']
+    time = request.form['att_time']
+    
+    insert_sql = "INSERT INTO attendance (emp_id, att_time, att_date, att_status) VALUES (%s, %s, %s, %s)"
+    cursor = db_conn.cursor()
+
+    cursor.execute(insert_sql, (emp_id, time, date, status))
+    db_conn.commit()
+
+    cursor.close()
+    return render_template("AddAttendanceOutput.html")
+
+@app.route("/fetchdata", methods=['GET'])
+def GetEmpData(emp_id):
+
+    #emp_id = request.form['emp_id']
+    mycursor = db_conn.cursor()
+    getempdata = "select * from employee WHERE emp_id = %s"
+    mycursor.execute(getempdata,(emp_id))
+    result = mycursor.fetchall()
+    (emp_id,first_name,last_name,contact_no,email,position,hiredate,salary) = result[0]   
+    image_url = showimage(bucket)
+
+    return render_template('GetEmpOutput.html', emp_id=emp_id,first_name=first_name,last_name=last_name,contact_no=contact_no,email=email,position=position,hiredate=hiredate,salary=salary,image_url=image_url)
+
+def showimage(bucket):
+    s3_client = boto3.client('s3')
+    public_urls = []
+    emp_id = request.form['emp_id']
+    try:
+        for item in s3_client.list_objects(Bucket=bucket)['Contents']:
+            presigned_url = s3_client.generate_presigned_url('get_object', Params = {'Bucket': bucket, 'Key': item['Key']}, ExpiresIn = 100)
+            public_urls.append(presigned_url)
+    except Exception as e:
+        pass
+    # print("[INFO] : The contents inside show_image = ", public_urls)
+    return public_urls
+
 @app.route("/diraddemp", methods=['GET', 'POST'])
 def DirectAddEmp():
-    return render_template('AddEmp.html')
+    #create a cursor
+    cursor = db_conn.cursor() 
+    #execute select statement to fetch data to be displayed in combo/dropdown
+    cursor.execute('SELECT emp_id FROM employee ORDER BY emp_id DESC LIMIT 1') 
+    #fetch all rows ans store as a set of tuples 
+    latestid = cursor.fetchall() 
+    return render_template('AddEmp.html', latestid=latestid)
 
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
