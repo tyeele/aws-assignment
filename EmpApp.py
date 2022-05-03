@@ -56,16 +56,24 @@ def UpdatePayroll():
 
     #check salary format
     try:
-        salary = "${:,.2f}".format(salary)
+        dSalary = float(salary)
+        salary = "{:.2f}".format(dSalary)
 
     except:
         #return "Please enter a valid salary format!"
-        return render_template("Payroll.html", error="Please enter a valid salary format! e.g.: RM 500 or RM 1000.50")
+        #create a cursor
+        cursor = db_conn.cursor() 
+        #execute select statement to fetch data to be displayed in combo/dropdown
+        cursor.execute('SELECT emp_id, first_name, last_name, salary FROM employee') 
+        #fetch all rows ans store as a set of tuples 
+        namelist = cursor.fetchall() 
+        return render_template("Payroll.html", error="Please enter a valid salary format! e.g.: RM 500 or RM 1000.50", namelist=namelist)
     
+    dSalary = float(salary)
     update_sql = "UPDATE employee SET salary = %s WHERE emp_id = %s"
     cursor = db_conn.cursor()
     
-    changefield = (salary, emp_id)
+    changefield = (dSalary, emp_id)
     cursor.execute(update_sql, (changefield))
     db_conn.commit()
 
@@ -131,24 +139,11 @@ def GetEmpData(id):
     mycursor.execute(getempdata,(emp_id))
     result = mycursor.fetchall()
     (emp_id,first_name,last_name,contact_no,email,position,hiredate,salary) = result[0]   
-    #image_url = showimage(bucket)
+    image_url = showimage(bucket, emp_id)
 
     name = last_name + " " + first_name
 
-    return render_template('GetEmpOutput.html', emp_id=emp_id,name=name, first_name=first_name,last_name=last_name,contact=contact_no,email=email,position=position,hiredate=hiredate,salary=salary)
-
-def showimage(bucket):
-    s3_client = boto3.client('s3')
-    public_urls = []
-    emp_id = request.form['emp_id']
-    try:
-        for item in s3_client.list_objects(Bucket=bucket)['Contents']:
-            presigned_url = s3_client.generate_presigned_url('get_object', Params = {'Bucket': bucket, 'Key': item['Key']}, ExpiresIn = 100)
-            public_urls.append(presigned_url)
-    except Exception as e:
-        pass
-    # print("[INFO] : The contents inside show_image = ", public_urls)
-    return public_urls
+    return render_template('GetEmpOutput.html', emp_id=emp_id,name=name, first_name=first_name,last_name=last_name,contact=contact_no,email=email,position=position,hiredate=hiredate,salary=salary,image=image_url)
 
 @app.route("/diraddemp", methods=['GET', 'POST'])
 def DirectAddEmp():
@@ -174,35 +169,30 @@ def AddEmp():
 
     convertedId = int(emp_id) - 1
     retrievedid = [[convertedId]]
-
-    #check salary and contact format
+    
+    #check salary format
     try:
-        pattern = "^[0-9.-]*$"
-        state = bool(re.match(pattern, contact))
-
-        if state is False:
-            contactError = "Please enter a valid contact format! e.g.: 012-3456789 or 0123456789"
-
-        salary = "${:,.2f}".format(salary)
+        dSalary = float(salary)
+        salary = "{:.2f}".format(dSalary)
 
     except:
         #return "Please enter a valid salary format!"
-        return render_template("AddEmp.html", error="Please enter a valid salary format! e.g.: RM 500 or RM 1000.50", contacterror=contactError, latestid=retrievedid)
+        return render_template("AddEmp.html", error="Please enter a valid salary format! e.g.: RM 500 or RM 1000.50", latestid=retrievedid)
 
-
+    dSalary = float(salary)
     insert_sql = "INSERT INTO employee VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     cursor = db_conn.cursor()
 
     if emp_image_file.filename == "":
-        return "Please select a file"
+        return render_template("AddEmp.html", img_error="Please select a file!", latestid=retrievedid)
 
     try:
 
-        cursor.execute(insert_sql, (emp_id, first_name, last_name, contact, email, position, hiredate, salary))
+        cursor.execute(insert_sql, (emp_id, first_name, last_name, contact, email, position, hiredate, dSalary))
         db_conn.commit()
         emp_name = "" + first_name + " " + last_name
         # Upload image file in S3 #
-        emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file"
+        emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file.png"
         s3 = boto3.resource('s3')
 
         try:
@@ -234,15 +224,15 @@ def AddEmp():
 def DirectEditEmp(id):
 
     mycursor = db_conn.cursor()
-    getempdata = "select * from employee WHERE emp_id = %s"
+    getempdata = "select emp_id, first_name, last_name, contact, email, position, hiredate from employee WHERE emp_id = %s"
     mycursor.execute(getempdata,(id))
     result = mycursor.fetchall()
-    (emp_id,first_name,last_name,contact,email,position,hiredate,salary) = result[0]   
-    #image_url = showimage(bucket)
+    (emp_id,first_name,last_name,contact,email,position,hiredate) = result[0]   
+    image_url = showimage(bucket, id)
 
     name = last_name + " " + first_name
 
-    return render_template("EditEmp.html", name=name, id=emp_id, first_name=first_name, last_name=last_name, contact=contact, email=email, position=position, hiredate=hiredate, salary=salary)
+    return render_template("EditEmp.html", name=name, id=emp_id, first_name=first_name, last_name=last_name, contact=contact, email=email, position=position, hiredate=hiredate, image_url=image_url)
 
 @app.route("/editemp", methods=['GET','POST'])
 def EditEmp():
@@ -253,16 +243,61 @@ def EditEmp():
     email = request.form['email']
     position = request.form['position']
     hiredate = request.form['hiredate']
-    salary = request.form['salary']
     
-    update_sql = "UPDATE employee SET first_name = %s, last_name = %s, contact = %s, email = %s, position = %s, hiredate = %s, salary = %s WHERE emp_id = %s"
+    update_sql = "UPDATE employee SET first_name = %s, last_name = %s, contact = %s, email = %s, position = %s, hiredate = %s WHERE emp_id = %s"
     cursor = db_conn.cursor()
     
-    changefield = (first_name, last_name, contact, email, position, hiredate, salary, emp_id)
+    changefield = (first_name, last_name, contact, email, position, hiredate, emp_id)
     cursor.execute(update_sql, (changefield))
     db_conn.commit()
     cursor.close()
     return render_template("EditEmpOutput.html")
+
+@app.route("/dirdeleteconfirm/<int:id>", methods=['GET','POST'])
+def DirectDeleteConfirm(id):
+
+    mycursor = db_conn.cursor()
+    getempdata = "select * from employee WHERE emp_id = %s"
+    mycursor.execute(getempdata,(id))
+    result = mycursor.fetchall()
+    (emp_id,first_name,last_name,contact,email,position,hiredate,salary) = result[0]   
+    image_url = showimage(bucket, id)
+
+    name = last_name + " " + first_name
+
+    return render_template("DeleteConfirm.html", name=name, emp_id=emp_id, first_name=first_name, last_name=last_name, contact=contact, email=email, position=position, hiredate=hiredate, salary=salary, image_url=image_url)
+
+@app.route("/deleteconfirmed", methods=['GET','POST'])
+def DeleteConfirmed():
+
+    emp_id = request.form['emp_id']
+    name = request.form['name']
+    mycursor = db_conn.cursor()
+    del_att_sql = "DELETE FROM attendance WHERE emp_id = %s"
+    mycursor.execute(del_att_sql, (emp_id))
+    del_emp_sql = "DELETE FROM employee WHERE emp_id = %s"
+    mycursor.execute(del_emp_sql, (emp_id))
+    db_conn.commit()
+
+    emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file.png"
+    s3 = boto3.client('s3')
+    s3.delete_object(Bucket=custombucket, Key=emp_image_file_name_in_s3)
+
+    return render_template("DeleteConfirmOutput.html", name=name)
+
+# retrieve the image from the bucket
+def showimage(bucket, emp_id):
+    s3_client = boto3.client('s3')
+    public_urls = []
+    emp_image_file_name_in_s3 = "emp-id-" + str(emp_id) + "_image_file.png"
+    try:
+        for item in s3_client.list_objects(Bucket=bucket)['Contents']:
+            presigned_url = s3_client.generate_presigned_url('get_object', Params = {'Bucket': bucket, 'Key': emp_image_file_name_in_s3}, ExpiresIn = 100)
+            public_urls.append(presigned_url)
+    except Exception as e:
+        pass
+    # print("[INFO] : The contents inside show_image = ", public_urls)
+    return public_urls
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
