@@ -112,7 +112,7 @@
 									enctype="multipart/form-data">
                                     <div class="form-group">
 										<label for="emp_id">Employee</label>
-										<SELECT class="form-control" id="emp_id" name="emp_id" style="font-family:verdana">
+										<SELECT class="form-control" id="emp_id" name="emp_id" style="font-family:verdana; color:black">
                                             {% for n in namelist %}
                                                 <OPTION value={{n[0]}}>{{[n[2], n[1]]|join(' ')}}</OPTION>
                                             {% endfor %}
