@@ -45,7 +45,7 @@
 		<div class="navbar-menu-wrapper d-flex align-items-top">
 			<ul class="navbar-nav">
 				<li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
-					<h1 class="welcome-text"><span class="text-black fw-bold">Employee Payroll</span></h1>
+					<h1 class="welcome-text"><span class="text-black fw-bold">Employee Database</span></h1>
 				</li>
 			</ul>
 		</div>
@@ -85,8 +85,8 @@
 					</a>
 					<div class="collapse" id="attendance">
 						<ul class="nav flex-column sub-menu">
-							<li class="nav-item"> <a class="nav-link" href="/dirattendance">Attendance List</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="/diraddattendance">Add Attendance</a></li>
+							<li class="nav-item"> <a class="nav-link" href="/dirattendance">Get Attendance</a></li>
+							<li class="nav-item"> <a class="nav-link" href="/diraddattendance">Add Attendance</a></li>
 						</ul>
 					</div>
 				</li>
@@ -95,20 +95,67 @@
 		<!-- partial -->
 		<div class="main-panel">
 			<div class="content-wrapper">
-				<div class="row flex-grow">
-					<div class="col-12 grid-margin stretch-card">
-						<div class="card card-rounded bg-success">
-							<div class="card-body">
-								<div class="col-sm-8">
-									<h2 class="text-white upgrade-info mb-0">Salary has been updated successfully!
-									</h2><br>
-									<h4 class="text-white upgrade-info mb-0">Salary of {{ name }} has been updated to the database.
-									</h4><br><br>
-									<form action="/dirpayroll" autocomplete="on" method="GET">
-										<button type="submit" class="btn btn-dark btn-lg btn-block">Go Back</button>
-									</form>
-								</div>
+				<div class="col-md-12 grid-margin stretch-card">
+					<div class="card">
+						<div class="card-body">
+							<h4 class="card-title">Employee Information</h4>
+							<p class="card-description">
+								{{ name }}
+							</p>
+							<!--Grid column-->
+							<div class="col-md-12 mb-4">
+								<img class="rounded-circle z-depth-2 mx-auto d-block w-25 p-3" alt="Employee Image" src="{{ image_url[0] }}" data-holder-rendered="true">
 							</div>
+							<!--Grid column-->
+							<form class="forms-sample" action="/deleteconfirmed" autocomplete="on" method="POST">
+								<div class="form-group row">
+									<label for="emp_id" class="col-sm-3 col-form-label">Employee ID</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" name="emp_id" id="emp_id" value="{{ emp_id }}" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="name" class="col-sm-3 col-form-label">Name</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" name="name" id="name" value="{{ name }}" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="contact" class="col-sm-3 col-form-label">Contact</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="contact" value="{{ contact }}"
+											disabled>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="email" class="col-sm-3 col-form-label">Email</label>
+									<div class="col-sm-9">
+										<input type="email" class="form-control" id="email" value="{{ email }}" disabled>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="position" class="col-sm-3 col-form-label">Position</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="position" value="{{ position }}" disabled>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="hire_date" class="col-sm-3 col-form-label">Hire date</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="hire_date" value="{{ hiredate }}"
+											disabled>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label for="salary" class="col-sm-3 col-form-label">Salary</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="salary" value="{{ salary }}" disabled>
+									</div>
+								</div>
+								<span id="delete_confirmation" style="font-size: 15px">Are you sure you want to delete this?</span>
+								<button type="submit" class="btn btn-primary me-2">Yes</button>
+								<a href="/getemp"><button type="button" class="btn btn-primary me-2">No</button></a>
+							</form>
 						</div>
 					</div>
 				</div>

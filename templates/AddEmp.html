@@ -21,7 +21,7 @@
 	<!-- inject:css -->
 	<link rel="stylesheet" href="{{url_for('static',filename='css/vertical-layout-light/style.css')}}">
 	<!-- endinject -->
-	<link rel="shortcut icon" href="images/favicon.png" />
+	<link rel="shortcut icon" href="{{url_for('static',filename='images/favicon.png')}}" />
 </head>
 
 <body>
@@ -45,8 +45,7 @@
 		<div class="navbar-menu-wrapper d-flex align-items-top">
 			<ul class="navbar-nav">
 				<li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
-					<h1 class="welcome-text">Good Morning, <span class="text-black fw-bold">John Doe</span></h1>
-					<h3 class="welcome-sub-text">Employee Database </h3>
+					<h1 class="welcome-text"><span class="text-black fw-bold">Employee Database</span></h1>
 				</li>
 			</ul>
 			<button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
@@ -112,37 +111,37 @@
 									enctype="multipart/form-data">
 									<div class="form-group">
 										<label for="emp_id">Employee ID</label>
-										<input type="number" class="form-control" name="emp_id" id="emp_id" value="{{ latestid[0][0]+1 }}" readonly>
+										<input type="number" class="form-control" name="emp_id" id="emp_id" value="{{ latestid[0][0]+1 }}" readonly required>
 									</div>
 									<div class="form-group">
 										<label for="first_name">First Name</label>
 										<input type="text" class="form-control" name="first_name" id="first_name"
-											placeholder="First Name">
+											placeholder="First Name" required>
 									</div>
 									<div class="form-group">
 										<label for="last_name">Last Name</label>
-										<input type="text" class="form-control" name="last_name" id="last_name" placeholder="Last Name">
+										<input type="text" class="form-control" name="last_name" id="last_name" placeholder="Last Name" required>
 									</div>
 									<div class="form-group">
 										<label for="contact">Contact</label>
-										<input type="text" class="form-control" name="contact" id="contact" placeholder="Contact">
+										<input type="text" class="form-control" name="contact" id="contact" placeholder="Contact" required>
 									</div>
 									<div class="form-group">
 										<label for="email">Email address</label>
-										<input type="email" class="form-control" name="email" id="email" placeholder="Email address">
-										<span id="salary_error" style="font-size: 12px; color: red">{{ error }}</span>
+										<input type="email" class="form-control" name="email" id="email" placeholder="Email address" required>
 									</div>
 									<div class="form-group">
 										<label for="position">Position</label>
-										<input type="text" class="form-control" name="position" id="position" placeholder="Position">
+										<input type="text" class="form-control" name="position" id="position" placeholder="Position" required>
 									</div>
 									<div class="form-group">
 										<label for="hiredate">Hire Date</label>
-										<input type="date" class="form-control" name="hiredate" id="hiredate" placeholder="Date">
+										<input type="date" class="form-control" name="hiredate" id="hiredate" placeholder="Date" required>
 									</div>
 									<div class="form-group">
 										<label for="salary">Salary</label>
-										<input type="text" class="form-control" name="salary" id="salary" placeholder="Salary">
+										<input type="text" class="form-control" name="salary" id="salary" placeholder="Salary" required>
+										<span id="salary_error" style="font-size: 12px; color: red">{{ error }}</span>
 									</div>
 									<div class="form-group">
 										<label>Image</label>
@@ -155,9 +154,10 @@
 													type="button">Upload</button>
 											</span>
 										</div>
+										<span id="image_error" style="font-size: 12px; color: red">{{ img_error }}</span>
 									</div>
 									<button type="submit" class="btn btn-primary me-2">Submit</button>
-									<button class="btn btn-light">Cancel</button>
+									<a href="/getemp"><button type="button" class="btn btn-light">Cancel</button></a>
 								</form>
 							</div>
 						</div>
@@ -165,10 +165,8 @@
 					<!-- partial:partials/_footer.html -->
 					<footer class="footer">
 						<div class="d-sm-flex justify-content-center justify-content-sm-between">
-							<span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a
-									href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a>
-								from BootstrapDash.</span>
-							<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2021.
+							<span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Developed by Khoo Sze Zhe, Liao Xing Hang, Teoh Yee Le, Chin Neng Zhi</span>
+							<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2022.
 								All rights reserved.</span>
 						</div>
 					</footer>

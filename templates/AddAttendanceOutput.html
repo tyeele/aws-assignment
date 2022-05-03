@@ -21,7 +21,7 @@
 	<!-- inject:css -->
 	<link rel="stylesheet" href="{{url_for('static',filename='css/vertical-layout-light/style.css')}}">
 	<!-- endinject -->
-	<link rel="shortcut icon" href="images/favicon.png" />
+	<link rel="shortcut icon" href="{{url_for('static',filename='images/favicon.png')}}" />
 </head>
 
 <body>
@@ -45,8 +45,7 @@
 		<div class="navbar-menu-wrapper d-flex align-items-top">
 			<ul class="navbar-nav">
 				<li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
-					<h1 class="welcome-text">Good Morning, <span class="text-black fw-bold">John Doe</span></h1>
-					<h3 class="welcome-sub-text">Employee Information </h3>
+					<h1 class="welcome-text"><span class="text-black fw-bold">Employee Attendance</span></h1>
 				</li>
 			</ul>
 		</div>
@@ -73,7 +72,7 @@
 						<ul class="nav flex-column sub-menu">
 							<li class="nav-item"> <a class="nav-link" href="/getemp">Get Employee</a></li>
 							<li class="nav-item"> <a class="nav-link" href="/diraddemp">Add Employee</a></li>
-							<li class="nav-item"> <a class="nav-link" href="/direditemp">Edit Employee</a></li>
+							<li class="nav-item"> <a class="nav-link" href="/dirpayroll">Payroll</a></li>
 						</ul>
 					</div>
 				</li>
@@ -86,7 +85,8 @@
 					</a>
 					<div class="collapse" id="attendance">
 						<ul class="nav flex-column sub-menu">
-							<li class="nav-item"> <a class="nav-link" href="/dirattendance">Get Attendance</a></li>
+							<li class="nav-item"> <a class="nav-link" href="/dirattendance">Attendance List</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="/diraddattendance">Add Attendance</a></li>
 						</ul>
 					</div>
 				</li>
@@ -102,10 +102,10 @@
 								<div class="col-sm-8">
 									<h2 class="text-white upgrade-info mb-0">Attendance has been recorded successfully!
 									</h2><br>
-									<h4 class="text-white upgrade-info mb-0">{{ name }} checked in at {{ checkin_time }}.
+									<h4 class="text-white upgrade-info mb-0">{{ name }} {{ status }} at {{ date }} {{ time }}.
 									</h4><br><br>
-									<form action="http://3.134.115.108:80/" autocomplete="on" method="GET">
-										<button type="button" class="btn btn-dark btn-lg btn-block">Go Back</button>
+									<form action="/diraddattendance" autocomplete="on" method="GET">
+										<button type="submit" class="btn btn-dark btn-lg btn-block">Go Back</button>
 									</form>
 								</div>
 							</div>
@@ -116,11 +116,8 @@
 				<!-- partial:partials/_footer.html -->
 				<footer class="footer">
 					<div class="d-sm-flex justify-content-center justify-content-sm-between">
-						<span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Premium <a
-								href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a>
-							from
-							BootstrapDash.</span>
-						<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2021.
+						<span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Developed by Khoo Sze Zhe, Liao Xing Hang, Teoh Yee Le, Chin Neng Zhi</span>
+						<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Copyright © 2022.
 							All
 							rights reserved.</span>
 					</div>
