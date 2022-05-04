@@ -5,7 +5,7 @@
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>Star Admin2 </title>
+	<title>Cloud Buddies | {{ name }}</title>
 	<!-- plugins:css -->
 	<link rel="stylesheet" href="{{url_for('static',filename='vendors/feather/feather.css')}}">
 	<link rel="stylesheet" href="{{url_for('static',filename='vendors/mdi/css/materialdesignicons.min.css')}}">
@@ -107,7 +107,7 @@
 								<img class="rounded-circle z-depth-2 mx-auto d-block w-25 p-3" alt="Employee Image" src="{{ image[0] }}" data-holder-rendered="true">
 							</div>
 							<!--Grid column-->
-							<form class="forms-sample">
+							<form class="forms-sample" action="{{ url_for('DirectEditEmp', id=emp_id) }}" method="POST">
 								<div class="form-group row">
 									<label for="emp_id" class="col-sm-3 col-form-label">Employee ID</label>
 									<div class="col-sm-9">
