@@ -262,7 +262,6 @@
 				<table id="example" class="table table-striped table-bordered" style="width:100%">
 					<thead>
 						<tr>
-							<th>Attendance ID</th>
 							<th>Employee ID</th>
 							<th>Name</th>
 							<th>Attendance Status</th>
@@ -273,7 +272,6 @@
 					<tbody>
 						{% for a in attlist %}
 						<tr>
-							<td>{{a[0]}}</td>
 							<td>{{a[1]}}</td>
 							<td>{{[a[3], a[2]]|join(' ')}}</td>
 							<td>{{a[6]}}</td>
