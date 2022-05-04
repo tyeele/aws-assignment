@@ -251,7 +251,10 @@ def EditEmp():
     cursor.execute(update_sql, (changefield))
     db_conn.commit()
     cursor.close()
-    return render_template("EditEmpOutput.html")
+    
+    name = last_name + " " + first_name
+    
+    return render_template("EditEmpOutput.html", name=name)
 
 @app.route("/dirdeleteconfirm/<int:id>", methods=['GET','POST'])
 def DirectDeleteConfirm(id):
